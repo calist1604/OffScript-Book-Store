@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Leaf</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <!--HERO-->
+    <header class="bg-green-600 text-white p-6 flex justify-between items-center border-b mb-8 pb-4">
+        <div>
+        <p id="greeting" class="text-lg font-semibold"></p>
+        <h1 id="brand" class="text-3xl font-bold"></h1>
+        <p class="text-gray-300">Plants that make your room breathe.</p>
+        </div>
+        <button class="bg-white text-green-600 px-4 py-2 rounded-full hover:bg-gray-200 transition justify-ends flex items-center gap-2 mt-4">
+            🛒 Cart: <span id="cartCount">0</span>
+        </button>
+    </header>
+
+    <!--PRODUCT CARDS (filled by JavaScript)-->
+    <main class="p-6">
+        <h2 class="text-2xl font-bold mb-4">Our Plants</h2>
+        <div id="cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </main>
+
+    <script>
+        // ==== Lesson 1: variables ====
+        const brand = "GreenLeaf🌱";
+        document.getElementById("brand").textContent = brand;
+
+        // ==== Lesson 2: data types & operators ====
+        let hour = new Date().getHours();       // number (0-23)
+        const isMember = true;                  // boolean
+        const discountRate = 0.2;               // 20% off
+
+        // ==== Lesson 3: branching ====
+        let greeting;
+        if (hour < 12) {
+            greeting = "Good Morning";
+        } else if (hour < 18) {
+            greeting = "Good Afternoon";
+        } else {
+            greeting = "Good Evening";
+        }
+        document.getElementById("greeting").textContent = greeting;
+
+        // ==== Lesson 4: loops ====
+        const plants = [
+            { name: "monstera", price: 85000, img:"monstera.jpg"},
+            { name: "Snake Plant", price: 60000, img:"SnakePlant.png"},
+            { name: "Aloe Vera", price: 35000, img:"AloeVera.jpg"},
+        ];
+        const cards = document.getElementById("cards");
+
+        for(const plant of plants) {
+            let finalPrice = plant.price;
+            if (isMember && plant.price > 50000) {
+                finalPrice = plant.price - plant.price * discountRate;
+            }
+            cards.innerHTML += `
+            <div class="bg-white rounded-2xl p-6 shadow hover:-translate-y-1 hover:shadow-lg 
+            transition">
+            <div class="mx-auto my-4 rounded-full w-32 h-32 object-cover">${plant.img}</div>
+            <h3 class="text-xl font-semibold">${plant.name}</h3>
+            <p class="mt-2 text-green-700 font-bold">${finalPrice}</p>
+            <button class="add-btn mt-4 bg-green-600 text-white px-4 py-2 rounded-full 
+            hover:bg-green-700 transition">Add to cart</button>
+            </div>`;
+        }
+        
+        let cartCount = 0;
+        document.querySelectorAll(".add-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                cartCount++;
+                document.getElementById("cartCount").textContent = cartCount;
+            });
+        });
+
+    </script>
+</body>
+</html>

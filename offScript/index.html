@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>offScript Book Store</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-800">
+
+    <!-- HEADER -->
+    <header class="bg-slate-900 px-6 py-6 text-white shadow-lg">
+        <div class="mx-auto max-w-6xl">
+            <h1 class="text-3xl font-bold tracking-wide">kIMpuLL Book Store</h1>
+            <p class="mt-2 text-sm text-slate-300">Discover stories, explore new worlds.</p>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="mx-auto max-w-6xl px-6 py-10">
+
+        <!-- INTRODUCTION -->
+        <section class="mb-10 text-center">
+            <p class="text-sm font-semibold uppercase tracking-widest text-blue-600">Welcome to our bookstore</p>
+            <h2 class="mt-2 text-3xl font-bold text-slate-900">Explore Our Book Collection</h2>
+            <p class="mx-auto mt-3 max-w-xl leading-relaxed text-slate-600">
+                Pick your favorite books, add them directly to your cart, and enjoy special member and bulk discounts!
+            </p>
+        </section>
+
+        <!-- BOOK CATALOG GRID (Centered) -->
+        <section class="mb-12">
+            <h3 class="mb-6 text-center text-xl font-bold text-slate-900">Book Catalog</h3>
+            <div id="book-catalog" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 justify-center">
+                <!-- Book cards will be dynamically injected here -->
+            </div>
+        </section>
+
+        <!-- FULL-SCREEN CART & CHECKOUT AT THE BOTTOM -->
+        <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-2xl font-bold text-slate-900">Your Shopping Cart & Checkout</h3>
+            <p class="mt-1 text-sm text-slate-500">Review your selected books before placing the order.</p>
+
+            <!-- Cart Items List -->
+            <div id="cart-items" class="mt-6 divide-y divide-slate-100 max-h-60 overflow-y-auto border-t border-b border-slate-100 py-3">
+                <p class="text-sm text-slate-400 italic py-2 text-center">Cart is currently empty. Click "Add to Cart" on any book above.</p>
+            </div>
+
+            <!-- CART PRICE SUMMARY (Subtotal, Discounts, Final Total) -->
+            <div id="cart-summary" class="mt-4 hidden space-y-2 rounded-xl bg-slate-50 p-4 border border-slate-200 text-sm">
+                <div class="flex justify-between text-slate-600">
+                    <span>Subtotal:</span>
+                    <span id="summary-subtotal" class="font-semibold">Rp 0</span>
+                </div>
+                <div id="summary-discount-row" class="flex justify-between text-green-600 hidden">
+                    <span id="summary-discount-label">Diskon:</span>
+                    <span id="summary-discount-amount" class="font-semibold">-Rp 0</span>
+                </div>
+                <div class="flex justify-between border-t border-slate-200 pt-2 text-base font-bold text-slate-900">
+                    <span>Final Total:</span>
+                    <span id="summary-final" class="text-blue-700">Rp 0</span>
+                </div>
+            </div>
+
+            <!-- Checkout Form & Details -->
+            <form id="checkout-form" class="mt-6 space-y-5">
+                <div class="grid gap-6 md:grid-cols-2">
+                    <div>
+                        <label for="customer-name" class="mb-2 block text-sm font-semibold">Customer Name</label>
+                        <input type="text" id="customer-name" placeholder="Enter your name" class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+                    </div>
+
+                    <div class="flex items-center pt-6">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="is-member" class="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                            <label for="is-member" class="text-sm font-semibold cursor-pointer">I am a Store Member (Extra 10% Discount)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="checkout-button" disabled class="w-full cursor-not-allowed rounded-xl bg-slate-300 px-5 py-3 font-semibold text-slate-500 shadow-md transition">
+                    Checkout Order
+                </button>
+            </form>
+
+            <!-- RESULT MESSAGE -->
+            <div id="result" role="status" aria-live="polite" class="mt-6 hidden rounded-xl border p-4 text-sm leading-relaxed"></div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-12 bg-slate-900 px-6 py-6 text-center text-sm text-slate-300">
+        <p class="font-semibold text-white">kIMpuLL Book Store</p>
+        <p class="mt-2">Group offScript | Calista, Aurel, Linda</p>
+        <p class="mt-2 text-slate-400">Informatics Class X-2</p>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script src="script.js"></script>
+</body>
+</html>
