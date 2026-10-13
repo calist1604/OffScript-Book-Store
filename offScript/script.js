@@ -1,75 +1,89 @@
-// 1. BOOK DATA (Fixed / Static references for zero-loop access)
-const books = [
-    { id: 1, title: "Laskar Pelangi", author: "Andrea Hirata", price: 80000, stock: 5, icon: "⛵" },
-    { id: 2, title: "Bumi Manusia", author: "Pramoedya A. Toer", price: 95000, stock: 4, icon: "🌍" },
-    { id: 3, title: "Filosofi Teras", author: "Henry Manampiring", price: 88000, stock: 6, icon: "🏛️" },
-    { id: 4, title: "Atomic Habits", author: "James Clear", price: 110000, stock: 3, icon: "⚡" },
-    { id: 5, title: "Negeri 5 Menara", author: "A. Fuadi", price: 85000, stock: 5, icon: "🕌" }
-];
+// 1. BOOK DATA (Konstanta terpisah per buku)
+const book1 = { id: 1, title: "Laskar Pelangi", author: "Andrea Hirata", price: 80000, stock: 5, icon: "⛵" };
+const book2 = { id: 2, title: "Bumi Manusia", author: "Pramoedya A. Toer", price: 95000, stock: 4, icon: "🌍" };
+const book3 = { id: 3, title: "Filosofi Teras", author: "Henry Manampiring", price: 88000, stock: 6, icon: "🏛️" };
+const book4 = { id: 4, title: "Atomic Habits", author: "James Clear", price: 110000, stock: 3, icon: "⚡" };
+const book5 = { id: 5, title: "Negeri 5 Menara", author: "A. Fuadi", price: 85000, stock: 5, icon: "🕌" };
 
 let cart = [];
 
-const memberDiscountRate = 0.10;    // 10% discount for members
-const discountFor3Books = 0.05;     // 5% discount if total quantity >= 3
-const discountFor5Books = 0.15;     // 15% discount if total quantity >= 5
+const memberDiscountRate = 0.10;    // Diskon member 10%
+const discountFor3Books = 0.05;     // Diskon grosir 3+ buku (5%)
+const discountFor5Books = 0.15;     // Diskon grosir 5+ buku (15%)
 
-// 2. RENDER BOOK CATALOG (Centered with stock status on card - No loops)
-function renderBookCatalog() {
-    const catalogContainer = document.getElementById("book-catalog");
-    catalogContainer.innerHTML = "";
-
-    // Helper function to create individual book cards without loops
-    function createBookCard(book) {
-        const isOutOfStock = book.stock === 0;
-        const card = document.createElement("div");
-        card.className = "rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between max-w-sm w-full mx-auto";
-        card.innerHTML = `
-            <div>
-                <div class="mb-4 flex h-36 items-center justify-center rounded-xl bg-gradient-to-br from-blue-900 to-slate-700 text-6xl shadow-inner">
-                    ${book.icon}
-                </div>
-                <span class="text-xs font-bold uppercase tracking-widest text-blue-600">ID: ${book.id}</span>
-                <h4 class="mt-1 text-xl font-bold text-slate-900">${book.title}</h4>
-                <p class="text-sm text-slate-500">by ${book.author}</p>
-                <p class="mt-3 text-lg font-bold text-blue-700">Rp ${book.price.toLocaleString("id-ID")}</p>
-                <p class="mt-1 text-xs font-medium text-slate-600">Stock: ${book.stock} books</p>
-                
-                ${isOutOfStock ? `
-                    <div class="mt-3 rounded-lg bg-red-50 border border-red-200 p-2 text-center">
-                        <p class="text-xs font-bold text-red-600">Pilih buku lain, opsi ini habis</p>
-                    </div>
-                ` : ''}
-            </div>
-            
-            <button onclick="addToCart(${book.id})" ${isOutOfStock ? 'disabled' : ''} class="mt-5 w-full rounded-xl ${isOutOfStock ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98]'} px-4 py-2.5 font-semibold text-sm shadow-md transition">
-                ${isOutOfStock ? 'Habis' : '+ Add to Cart'}
-            </button>
-        `;
-        catalogContainer.appendChild(card);
-    }
-
-    // Render each book manually by index without looping structures
-    createBookCard(books[0]);
-    createBookCard(books[1]);
-    createBookCard(books[2]);
-    createBookCard(books[3]);
-    createBookCard(books[4]);
-}
-
-// 3. FORMAT RUPIAH HELPER
+// Helper Format Rupiah
 function formatRupiah(amount) {
     return "Rp " + amount.toLocaleString("id-ID");
 }
 
-// Add item to cart function with stock validation (Direct ID access)
+// 2. RENDER BOOK CATALOG (Menggunakan getElementById secara langsung tanpa loop)
+function renderBookCatalog() {
+    
+    // Fungsi kecil untuk mengisi card buku berdasarkan ID elemen HTML
+    function setBookCard(elementId, book) {
+        const container = document.getElementById(elementId);
+        const isOutOfStock = book.stock === 0;
+
+        container.innerHTML = `
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between max-w-sm w-full mx-auto h-full">
+                <div>
+                    <div class="mb-4 flex h-36 items-center justify-center rounded-xl bg-gradient-to-br from-blue-900 to-slate-700 text-6xl shadow-inner">
+                        ${book.icon}
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-blue-600">ID: ${book.id}</span>
+                    <h4 class="mt-1 text-xl font-bold text-slate-900">${book.title}</h4>
+                    <p class="text-sm text-slate-500">by ${book.author}</p>
+                    <p class="mt-3 text-lg font-bold text-blue-700">${formatRupiah(book.price)}</p>
+                    <p class="mt-1 text-xs font-medium text-slate-600">Stock: ${book.stock} books</p>
+                    
+                    ${isOutOfStock ? `
+                        <div class="mt-3 rounded-lg bg-red-50 border border-red-200 p-2 text-center">
+                            <p class="text-xs font-bold text-red-600">Pilih buku lain, opsi ini habis</p>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <button onclick="addToCart(${book.id})" ${isOutOfStock ? 'disabled' : ''} class="mt-5 w-full rounded-xl ${isOutOfStock ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98]'} px-4 py-2.5 font-semibold text-sm shadow-md transition">
+                    ${isOutOfStock ? 'Habis' : '+ Add to Cart'}
+                </button>
+            </div>
+        `;
+    }
+
+    // Panggil satu per satu secara manual tanpa perulangan
+    setBookCard("card-book-1", book1);
+    setBookCard("card-book-2", book2);
+    setBookCard("card-book-3", book3);
+    setBookCard("card-book-4", book4);
+    setBookCard("card-book-5", book5);
+}
+
+// 3. FUNGSI MENCARI BUKU BERDASARKAN ID (Pengganti pencarian array)
+function getBookById(id) {
+    if (id === 1) return book1;
+    if (id === 2) return book2;
+    if (id === 3) return book3;
+    if (id === 4) return book4;
+    if (id === 5) return book5;
+    return null;
+}
+
+// Tambah ke Keranjang
 function addToCart(bookId) {
-    const book = books[bookId - 1]; // Direct array lookup since IDs are 1-5
+    const book = getBookById(bookId);
     
     if (!book || book.stock <= 0) {
         return;
     }
 
-    const existingItem = cart.find(item => item.id === book.id);
+    // Cek apakah buku sudah ada di keranjang menggunakan ID langsung
+    let existingItem = null;
+    if (cart.length > 0 && cart[0].id === book.id) existingItem = cart[0];
+    else if (cart.length > 1 && cart[1].id === book.id) existingItem = cart[1];
+    else if (cart.length > 2 && cart[2].id === book.id) existingItem = cart[2];
+    else if (cart.length > 3 && cart[3].id === book.id) existingItem = cart[3];
+    else if (cart.length > 4 && cart[4].id === book.id) existingItem = cart[4];
+
     const currentQtyInCart = existingItem ? existingItem.quantity : 0;
 
     if ((currentQtyInCart + 1) > book.stock) {
@@ -91,7 +105,7 @@ function addToCart(bookId) {
     showResult(`Added "${book.title}" to cart!`, true);
 }
 
-// Update full-screen cart summary UI and live calculations
+// Update Tampilan Keranjang
 function updateCartDisplay() {
     const cartContainer = document.getElementById("cart-items");
     const checkoutButton = document.getElementById("checkout-button");
@@ -110,8 +124,9 @@ function updateCartDisplay() {
     let subtotal = 0;
     let totalQuantity = 0;
 
-    // Render cart items explicitly up to a max cart capacity or using functional mapping instead of loops
-    cart.forEach((item, index) => {
+    // Render item keranjang secara manual maksimal 5 item tanpa loop
+    function renderCartRow(item, index) {
+        if (!item) return;
         totalQuantity += item.quantity;
         subtotal += item.price * item.quantity;
 
@@ -135,9 +150,15 @@ function updateCartDisplay() {
             </div>
         `;
         cartContainer.appendChild(itemRow);
-    });
+    }
 
-    // Calculate discounts
+    renderCartRow(cart[0], 0);
+    renderCartRow(cart[1], 1);
+    renderCartRow(cart[2], 2);
+    renderCartRow(cart[3], 3);
+    renderCartRow(cart[4], 4);
+
+    // Hitung Diskon
     let discountRate = 0;
     let discountLabels = [];
 
@@ -157,7 +178,7 @@ function updateCartDisplay() {
     const discountAmount = subtotal * discountRate;
     const finalPrice = subtotal - discountAmount;
 
-    // Update Summary Box UI
+    // Update Ringkasan Harga
     cartSummary.classList.remove("hidden");
     document.getElementById("summary-subtotal").textContent = formatRupiah(subtotal);
 
@@ -176,14 +197,14 @@ function updateCartDisplay() {
     checkoutButton.className = "w-full rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-md transition hover:bg-blue-700 active:scale-[0.98]";
 }
 
-// Listen to checkbox change to instantly update cart summary
+// Event listener checkbox member
 document.getElementById("is-member").addEventListener("change", updateCartDisplay);
 
-// Adjust quantity inside cart with stock validation
+// Ubah Jumlah Qty di Cart
 function changeQuantity(index, amount) {
     const cartItem = cart[index];
     if (!cartItem) return;
-    const book = books[cartItem.id - 1];
+    const book = getBookById(cartItem.id);
     const newQty = cartItem.quantity + amount;
 
     if (newQty <= 0) {
@@ -200,13 +221,13 @@ function changeQuantity(index, amount) {
     updateCartDisplay();
 }
 
-// Remove item from cart
+// Hapus Item dari Cart
 function removeFromCart(index) {
     cart.splice(index, 1);
     updateCartDisplay();
 }
 
-// Show result message helper
+// Tampilkan Pesan Hasil
 function showResult(message, isSuccess) {
     const result = document.getElementById("result");
     result.textContent = message;
@@ -219,7 +240,7 @@ function showResult(message, isSuccess) {
     }
 }
 
-// 4. CHECKOUT PROCESS WITH STOCK VALIDATION (No loop validation)
+// 4. PROSES CHECKOUT
 document.getElementById("checkout-form").onsubmit = function(event) {
     event.preventDefault();
 
@@ -236,34 +257,37 @@ document.getElementById("checkout-form").onsubmit = function(event) {
         return;
     }
 
-    // Direct stock check for cart items without looping statements
+    // Validasi stok per item keranjang tanpa loop
     let stockValid = true;
     let invalidBookTitle = '';
-    
-    const checkStockAtIndex = (arrIndex) => {
-        if (arrIndex >= cart.length) return;
-        const cartItem = cart[arrIndex];
-        const book = books[cartItem.id - 1];
-        if (!book || cartItem.quantity > book.stock) {
-            stockValid = false;
-            invalidBookTitle = book ? book.title : 'buku';
-            return;
-        }
-        checkStockAtIndex(arrIndex + 1);
-    };
-    checkStockAtIndex(0);
+
+    if (cart[0]) {
+        let b = getBookById(cart[0].id);
+        if (cart[0].quantity > b.stock) { stockValid = false; invalidBookTitle = b.title; }
+    }
+    if (cart[1]) {
+        let b = getBookById(cart[1].id);
+        if (cart[1].quantity > b.stock) { stockValid = false; invalidBookTitle = b.title; }
+    }
+    if (cart[2]) {
+        let b = getBookById(cart[2].id);
+        if (cart[2].quantity > b.stock) { stockValid = false; invalidBookTitle = b.title; }
+    }
 
     if (!stockValid) {
         showResult(`Maaf, stok untuk "${invalidBookTitle}" sudah habis atau tidak mencukupi.`, false);
         return;
     }
 
+    // Hitung total manual
     let subtotal = 0;
     let totalQuantity = 0;
 
-    // Calculate totals explicitly using array reduce or direct indexing instead of looping statements
-    totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
-    subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    if (cart[0]) { totalQuantity += cart[0].quantity; subtotal += cart[0].price * cart[0].quantity; }
+    if (cart[1]) { totalQuantity += cart[1].quantity; subtotal += cart[1].price * cart[1].quantity; }
+    if (cart[2]) { totalQuantity += cart[2].quantity; subtotal += cart[2].price * cart[2].quantity; }
+    if (cart[3]) { totalQuantity += cart[3].quantity; subtotal += cart[3].price * cart[3].quantity; }
+    if (cart[4]) { totalQuantity += cart[4].quantity; subtotal += cart[4].price * cart[4].quantity; }
 
     let discountRate = 0;
     if (totalQuantity >= 5) {
@@ -279,13 +303,12 @@ document.getElementById("checkout-form").onsubmit = function(event) {
     const discountAmount = subtotal * discountRate;
     const finalPrice = subtotal - discountAmount;
 
-    // Deduct stock globally using functional mapping
-    cart.forEach(cartItem => {
-        const book = books[cartItem.id - 1];
-        if (book) {
-            book.stock -= cartItem.quantity;
-        }
-    });
+    // Kurangi stok buku asli
+    if (cart[0]) getBookById(cart[0].id).stock -= cart[0].quantity;
+    if (cart[1]) getBookById(cart[1].id).stock -= cart[1].quantity;
+    if (cart[2]) getBookById(cart[2].id).stock -= cart[2].quantity;
+    if (cart[3]) getBookById(cart[3].id).stock -= cart[3].quantity;
+    if (cart[4]) getBookById(cart[4].id).stock -= cart[4].quantity;
 
     let message = `Thank you, ${name}! Your order of ${totalQuantity} book(s) was successful. Subtotal: ${formatRupiah(subtotal)}. `;
     if (discountRate > 0) {
@@ -297,7 +320,7 @@ document.getElementById("checkout-form").onsubmit = function(event) {
 
     showResult(message, true);
 
-    // Reset cart and refresh catalog
+    // Reset keranjang
     cart = [];
     document.getElementById("is-member").checked = false;
     updateCartDisplay();
@@ -305,6 +328,6 @@ document.getElementById("checkout-form").onsubmit = function(event) {
     document.getElementById("customer-name").value = "";
 };
 
-// Initial setup call
+// Panggilan awal saat halaman dimuat
 renderBookCatalog();
 updateCartDisplay();

@@ -29,11 +29,15 @@
             </p>
         </section>
 
-        <!-- BOOK CATALOG GRID (Centered) -->
+        <!-- BOOK CATALOG GRID (Menggunakan ID spesifik per card) -->
         <section class="mb-12">
             <h3 class="mb-6 text-center text-xl font-bold text-slate-900">Book Catalog</h3>
-            <div id="book-catalog" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 justify-center">
-                <!-- Book cards will be dynamically injected here -->
+            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 justify-center">
+                <div id="card-book-1"></div>
+                <div id="card-book-2"></div>
+                <div id="card-book-3"></div>
+                <div id="card-book-4"></div>
+                <div id="card-book-5"></div>
             </div>
         </section>
 
@@ -47,7 +51,7 @@
                 <p class="text-sm text-slate-400 italic py-2 text-center">Cart is currently empty. Click "Add to Cart" on any book above.</p>
             </div>
 
-            <!-- CART PRICE SUMMARY (Subtotal, Discounts, Final Total) -->
+            <!-- CART PRICE SUMMARY -->
             <div id="cart-summary" class="mt-4 hidden space-y-2 rounded-xl bg-slate-50 p-4 border border-slate-200 text-sm">
                 <div class="flex justify-between text-slate-600">
                     <span>Subtotal:</span>
