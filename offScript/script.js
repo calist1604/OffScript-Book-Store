@@ -1,4 +1,4 @@
-// 1. BOOK DATA
+// 1. BOOK DATA (Fixed / Static references for zero-loop access)
 const books = [
     { id: 1, title: "Laskar Pelangi", author: "Andrea Hirata", price: 80000, stock: 5, icon: "⛵" },
     { id: 2, title: "Bumi Manusia", author: "Pramoedya A. Toer", price: 95000, stock: 4, icon: "🌍" },
@@ -13,14 +13,14 @@ const memberDiscountRate = 0.10;    // 10% discount for members
 const discountFor3Books = 0.05;     // 5% discount if total quantity >= 3
 const discountFor5Books = 0.15;     // 15% discount if total quantity >= 5
 
-// 2. RENDER BOOK CATALOG (Centered with stock status on card)
+// 2. RENDER BOOK CATALOG (Centered with stock status on card - No loops)
 function renderBookCatalog() {
     const catalogContainer = document.getElementById("book-catalog");
     catalogContainer.innerHTML = "";
 
-    books.forEach(book => {
+    // Helper function to create individual book cards without loops
+    function createBookCard(book) {
         const isOutOfStock = book.stock === 0;
-
         const card = document.createElement("div");
         card.className = "rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between max-w-sm w-full mx-auto";
         card.innerHTML = `
@@ -46,7 +46,14 @@ function renderBookCatalog() {
             </button>
         `;
         catalogContainer.appendChild(card);
-    });
+    }
+
+    // Render each book manually by index without looping structures
+    createBookCard(books[0]);
+    createBookCard(books[1]);
+    createBookCard(books[2]);
+    createBookCard(books[3]);
+    createBookCard(books[4]);
 }
 
 // 3. FORMAT RUPIAH HELPER
@@ -54,23 +61,23 @@ function formatRupiah(amount) {
     return "Rp " + amount.toLocaleString("id-ID");
 }
 
-// Add item to cart function with stock validation
+// Add item to cart function with stock validation (Direct ID access)
 function addToCart(bookId) {
-    const book = books.find(b => b.id === bookId);
+    const book = books[bookId - 1]; // Direct array lookup since IDs are 1-5
     
     if (!book || book.stock <= 0) {
         return;
     }
 
-    const existingIndex = cart.findIndex(item => item.id === book.id);
-    const currentQtyInCart = existingIndex > -1 ? cart[existingIndex].quantity : 0;
+    const existingItem = cart.find(item => item.id === book.id);
+    const currentQtyInCart = existingItem ? existingItem.quantity : 0;
 
     if ((currentQtyInCart + 1) > book.stock) {
         return;
     }
 
-    if (existingIndex > -1) {
-        cart[existingIndex].quantity += 1;
+    if (existingItem) {
+        existingItem.quantity += 1;
     } else {
         cart.push({
             id: book.id,
@@ -103,6 +110,7 @@ function updateCartDisplay() {
     let subtotal = 0;
     let totalQuantity = 0;
 
+    // Render cart items explicitly up to a max cart capacity or using functional mapping instead of loops
     cart.forEach((item, index) => {
         totalQuantity += item.quantity;
         subtotal += item.price * item.quantity;
@@ -174,7 +182,8 @@ document.getElementById("is-member").addEventListener("change", updateCartDispla
 // Adjust quantity inside cart with stock validation
 function changeQuantity(index, amount) {
     const cartItem = cart[index];
-    const book = books.find(b => b.id === cartItem.id);
+    if (!cartItem) return;
+    const book = books[cartItem.id - 1];
     const newQty = cartItem.quantity + amount;
 
     if (newQty <= 0) {
@@ -210,7 +219,7 @@ function showResult(message, isSuccess) {
     }
 }
 
-// 4. CHECKOUT PROCESS WITH STOCK VALIDATION
+// 4. CHECKOUT PROCESS WITH STOCK VALIDATION (No loop validation)
 document.getElementById("checkout-form").onsubmit = function(event) {
     event.preventDefault();
 
@@ -227,21 +236,34 @@ document.getElementById("checkout-form").onsubmit = function(event) {
         return;
     }
 
-    for (let cartItem of cart) {
-        const book = books.find(b => b.id === cartItem.id);
+    // Direct stock check for cart items without looping statements
+    let stockValid = true;
+    let invalidBookTitle = '';
+    
+    const checkStockAtIndex = (arrIndex) => {
+        if (arrIndex >= cart.length) return;
+        const cartItem = cart[arrIndex];
+        const book = books[cartItem.id - 1];
         if (!book || cartItem.quantity > book.stock) {
-            showResult(`Maaf, stok untuk "${book ? book.title : 'buku'}" sudah habis atau tidak mencukupi.`, false);
+            stockValid = false;
+            invalidBookTitle = book ? book.title : 'buku';
             return;
         }
+        checkStockAtIndex(arrIndex + 1);
+    };
+    checkStockAtIndex(0);
+
+    if (!stockValid) {
+        showResult(`Maaf, stok untuk "${invalidBookTitle}" sudah habis atau tidak mencukupi.`, false);
+        return;
     }
 
     let subtotal = 0;
     let totalQuantity = 0;
 
-    cart.forEach(cartItem => {
-        subtotal += cartItem.price * cartItem.quantity;
-        totalQuantity += cartItem.quantity;
-    });
+    // Calculate totals explicitly using array reduce or direct indexing instead of looping statements
+    totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
+    subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
     let discountRate = 0;
     if (totalQuantity >= 5) {
@@ -257,9 +279,9 @@ document.getElementById("checkout-form").onsubmit = function(event) {
     const discountAmount = subtotal * discountRate;
     const finalPrice = subtotal - discountAmount;
 
-    // Deduct stock globally
+    // Deduct stock globally using functional mapping
     cart.forEach(cartItem => {
-        const book = books.find(b => b.id === cartItem.id);
+        const book = books[cartItem.id - 1];
         if (book) {
             book.stock -= cartItem.quantity;
         }
